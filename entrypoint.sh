@@ -7,6 +7,7 @@ ipfs daemon &
 node /server/build/server.js &
 
 while sleep 20; do
+  # Ensure processes are still alive
   ps ax | grep node | grep -q -v grep
   if [ $? -ne 0 ]; then
     echo "Node process exited"
@@ -17,4 +18,6 @@ while sleep 20; do
     echo "IFPS daemon process exited"
     exit 1
   fi
+  # Download the latest published mappings via ipns
+  npm run load-mappings
 done
