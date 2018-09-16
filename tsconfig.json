@@ -5,6 +5,7 @@
     "target": "es5",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "outDir": "build"
+    "outDir": "build",
+    "lib": ["es2015"]
   }
 }
