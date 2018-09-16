@@ -24,5 +24,6 @@ while sleep 20; do
     exit 1
   fi
   # Download the latest published mappings via ipns
-  ( cd /server ; npm run load-mappings )
+  # Only do this if there isn't already a load process running
+  ps ax | grep mappings.json | grep -q -v grep || ( cd /server ; npm run load-mappings )
 done
