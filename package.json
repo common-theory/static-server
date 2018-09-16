@@ -10,8 +10,8 @@
   },
   "scripts": {
     "start": "node build/server.js",
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc && npm run load-mappings",
+    "load-mappings": "ipfs get /ipns/Qmd45HJPXYdvzBMJcd3U5xTgctb5cFgsMUw2bmNg5nwSbe -o mappings.json"
   },
   "author": "Chance Hudson",
   "license": "MIT"
