@@ -4,7 +4,12 @@ set -e
 
 ipfs init
 ipfs daemon &
-node /server/build/server.js &
+
+# Wait for the daemon to come up
+sleep 5
+
+# Start the http proxy
+( cd /server ; npm start & )
 
 while sleep 20; do
   # Ensure processes are still alive
@@ -19,5 +24,5 @@ while sleep 20; do
     exit 1
   fi
   # Download the latest published mappings via ipns
-  npm run load-mappings
+  ( cd /server ; npm run load-mappings )
 done
