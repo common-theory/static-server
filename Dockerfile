@@ -1,13 +1,6 @@
 FROM alpine:latest
 MAINTAINER Chance Hudson
 
-# Install nginx
-RUN apk add --no-cache bash nginx && \
-  mkdir -p /run/nginx
-
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY entrypoint.sh /entrypoint.sh
-
 # Install ipfs
 RUN mkdir /install && \
   cd /install && \
@@ -19,6 +12,18 @@ RUN mkdir /install && \
   cd / && \
   rm -rf /install
 
+# Install node
+RUN apk add --no-cache bash nodejs-npm
+
+COPY . /server
+
+RUN cd /server && \
+  npm install && \
+  npm run build && \
+  rm -rf node_modules
+
 EXPOSE 3000
+
+COPY entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
