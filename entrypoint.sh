@@ -3,7 +3,7 @@
 set -e
 
 ipfs init
-ipfs daemon &
+ipfs daemon --enable-namesys-pubsub &
 
 # Wait for the daemon to come up
 sleep 5
