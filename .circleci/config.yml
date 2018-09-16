@@ -1,0 +1,24 @@
+version: 2
+jobs:
+  build_push:
+    machine:
+      enabled: true
+    steps:
+      - checkout
+      - run:
+          name: Docker Login
+          command: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - run:
+          name: Build Docker Image
+          command: docker build . -t ctheory/static-server:latest
+      - run:
+          name: Push Docker Image
+          command: docker push ctheory/static-server:latest
+workflows:
+  version: 2
+  build-push:
+    jobs:
+      - build_push:
+          filters:
+            branches:
+              only: master
