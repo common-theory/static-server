@@ -4,6 +4,10 @@ import fs from 'fs';
 const MAPPINGS_PATH = '../mappings.json';
 let DNS_MAPPINGS = require(MAPPINGS_PATH);
 
+const cache: {
+  [key: string]: string
+} = {};
+
 fs.watchFile(MAPPINGS_PATH, () => {
   console.log('Reloading DNS mappings');
   DNS_MAPPINGS = require(MAPPINGS_PATH);
@@ -47,6 +51,10 @@ server.listen(3000, () => {
 
 function download(ipfsAddress: string) {
   return new Promise((rs, rj) => {
+    if (cache[ipfsAddress]) {
+      rs(cache[ipfsAddress]);
+      return;
+    }
     let rawData = '';
     http.get(`http://localhost:8080/ipfs/${ipfsAddress}`, (res) => {
       if (res.statusCode !== 200) {
@@ -57,6 +65,7 @@ function download(ipfsAddress: string) {
         rawData += chunk;
       });
       res.on('end', () => {
+        cache[ipfsAddress] = rawData;
         rs(rawData);
       });
     });
