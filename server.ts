@@ -13,18 +13,17 @@ fs.watchFile(MAPPINGS_PATH, () => {
   DNS_MAPPINGS = require(MAPPINGS_PATH);
 });
 
-Object.keys(DNS_MAPPINGS).forEach((key) => {
+Object.keys(DNS_MAPPINGS).forEach(async (key) => {
   const address = DNS_MAPPINGS[key];
-  download(address)
-    .then(() => {
-      console.log(`Successfully pre-loaded ${key}`);
-    })
-    .catch(err => {
-      console.log(`Error pre-loading ${key}: ${err}`);
-    });
+  try {
+    await download(address);
+    console.log(`Successfully pre-loaded ${key}`);
+  } catch (err) {
+    console.log(`Error pre-loading ${key}: ${err}`);
+  }
 });
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const ipfsAddress = DNS_MAPPINGS[req.headers.host];
   if (!ipfsAddress) {
     res.writeHead(404, {
@@ -32,17 +31,16 @@ const server = http.createServer((req, res) => {
     });
     res.end(`No mapping specified for host ${req.headers.host}`);
   }
-  download(ipfsAddress)
-    .then((data: string) => {
-      res.writeHead(200, {
-        'Content-Type': 'text/html',
-      });
-      res.end(data);
-    })
-    .catch(err => {
+  try {
+    const data = await download(ipfsAddress);
+    res.writeHead(200, {
+      'Content-Type': 'text/html',
+    });
+    res.end(data);
+  } catch (err) {
       res.writeHead(500);
       res.end('Error retrieving ipfs data' + err);
-    });
+  }
 });
 
 server.listen(3000, () => {
