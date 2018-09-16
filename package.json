@@ -11,7 +11,8 @@
   "scripts": {
     "start": "node build/server.js",
     "build": "tsc && npm run load-mappings",
-    "load-mappings": "ipfs get /ipns/Qmd45HJPXYdvzBMJcd3U5xTgctb5cFgsMUw2bmNg5nwSbe -o mappings.json"
+    "load-mappings": "ipfs get /ipns/QmcizC46HXX5aqFw1z7xvvAN4YqMhgZB5H7pKv5Mfpr1TJ -o mappings.json",
+    "publish-mappings": "ipfs name publish --key=QmcizC46HXX5aqFw1z7xvvAN4YqMhgZB5H7pKv5Mfpr1TJ /ipfs/$(ipfs add mappings.json -q)"
   },
   "author": "Chance Hudson",
   "license": "MIT"
