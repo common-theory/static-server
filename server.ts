@@ -50,11 +50,12 @@ server.listen(3000, () => {
 });
 
 function download(ipfsAddress: string) {
+  console.log(DNS_MAPPINGS, ipfsAddress);
   return new Promise((rs, rj) => {
-    // if (cache[ipfsAddress]) {
-    //   rs(cache[ipfsAddress]);
-    //   return;
-    // }
+    if (cache[ipfsAddress]) {
+      rs(cache[ipfsAddress]);
+      return;
+    }
     let rawData = '';
     http.get(`http://localhost:8080/ipfs/${ipfsAddress}`, (res) => {
       if (res.statusCode !== 200) {
