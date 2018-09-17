@@ -31,6 +31,7 @@ const server = http.createServer(async (req, res) => {
       'Content-Type': 'text/plain',
     });
     res.end(`No mapping specified for host ${req.headers.host}`);
+    return;
   }
   try {
     const data = await download(ipfsAddress);
