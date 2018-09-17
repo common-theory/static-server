@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "A server mapping http requests to ipfs addresses",
   "main": "build/server.js",
-  "dependencies": {},
+  "dependencies": {
+    "ipfs": "^0.32.0"
+  },
   "devDependencies": {
     "@types/node": "^10.9.4",
     "typescript": "^3.0.3"

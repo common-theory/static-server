@@ -12,7 +12,7 @@ sleep 5
 # Start the http proxy
 ( cd /server ; npm start & )
 
-while sleep 20; do
+while sleep 60; do
   # Ensure processes are still alive
   ps ax | grep node | grep -q -v grep
   if [ $? -ne 0 ]; then
@@ -24,7 +24,4 @@ while sleep 20; do
     echo "IFPS daemon process exited"
     exit 1
   fi
-  # Download the latest published mappings via ipns
-  # Only do this if there isn't already a load process running
-  ps ax | grep mappings.json | grep -q -v grep || ( cd /server ; npm run load-mappings )
 done
