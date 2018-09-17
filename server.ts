@@ -11,23 +11,6 @@ const node = new IPFS({
 const MAPPING_ADDRESS = '/ipns/QmcizC46HXX5aqFw1z7xvvAN4YqMhgZB5H7pKv5Mfpr1TJ';
 
 node.on('ready', async () => {
-  /**
-   * A key value mapping of domains -> ipfs addresses.
-   **/
-  let DNS_MAPPINGS: {
-    [key: string]: string
-  } = {};
-
-  /**
-   * Load the mappings and preload the content into memory.
-   **/
-  mappings()
-    .then(async (_mappings: any) => {
-      DNS_MAPPINGS = _mappings;
-      await preloadAddresses();
-    })
-    .catch(err => console.log('Error in initial load', err));
-
   // Cache some IPFS files in memory
   const cache: {
     [key: string]: string
@@ -37,8 +20,9 @@ node.on('ready', async () => {
    * Load all IPFS addresses specified in the currently loaded mapping.
    **/
   async function preloadAddresses() {
-    Object.keys(DNS_MAPPINGS).forEach(async (key) => {
-      const address = DNS_MAPPINGS[key];
+    const _mappings = await mappings();
+    Object.keys(_mappings).forEach(async (key) => {
+      const address = _mappings[key];
       try {
         await download(address);
         console.log(`Successfully pre-loaded ${key}`);
@@ -53,7 +37,7 @@ node.on('ready', async () => {
    * hostname -> ipfs address. These are stored in the mappings.json file.
    **/
   const server = http.createServer(async (req, res) => {
-    const ipfsAddress = DNS_MAPPINGS[req.headers.host];
+    const ipfsAddress = (await mappings())[req.headers.host];
     if (!ipfsAddress) {
       res.writeHead(404, {
         'Content-Type': 'text/plain',
@@ -78,6 +62,7 @@ node.on('ready', async () => {
    **/
   server.listen(3000, () => {
     console.log('http server listening on port 3000');
+    preloadAddresses();
   });
 
   /**
@@ -97,7 +82,9 @@ node.on('ready', async () => {
     return data;
   }
 
-  async function mappings() {
+  async function mappings(): Promise<{
+    [key: string]: string
+  }> {
     let rawData = '';
     return new Promise((rs, rj) => {
       http.get(`http://localhost:8080${MAPPING_ADDRESS}`, (res) => {
@@ -112,6 +99,6 @@ node.on('ready', async () => {
           rs(JSON.parse(rawData));
         });
       });
-    });
+    }) as any;
   }
 });
