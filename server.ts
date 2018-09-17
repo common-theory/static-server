@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 const MAPPINGS_PATH = path.resolve(__dirname, '../mappings.json');
-let DNS_MAPPINGS = require(MAPPINGS_PATH);
+let DNS_MAPPINGS = JSON.parse(fs.readFileSync(MAPPINGS_PATH, 'utf8'));
 
 const cache: {
   [key: string]: string
@@ -11,7 +11,9 @@ const cache: {
 
 fs.watch(MAPPINGS_PATH, () => {
   console.log('Reloading DNS mappings');
-  DNS_MAPPINGS = require(MAPPINGS_PATH);
+  const m = JSON.parse(fs.readFileSync(MAPPINGS_PATH, 'utf8'));
+  console.log('new mappings', m);
+  DNS_MAPPINGS = m;
 });
 
 Object.keys(DNS_MAPPINGS).forEach(async (key) => {
@@ -50,7 +52,6 @@ server.listen(3000, () => {
 });
 
 function download(ipfsAddress: string) {
-  console.log(DNS_MAPPINGS, ipfsAddress);
   return new Promise((rs, rj) => {
     if (cache[ipfsAddress]) {
       rs(cache[ipfsAddress]);
