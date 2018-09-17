@@ -3,26 +3,40 @@ import fs from 'fs';
 import path from 'path';
 
 const MAPPINGS_PATH = path.resolve(__dirname, '../mappings.json');
-let DNS_MAPPINGS = loadMappings() || {};
+let DNS_MAPPINGS: {
+  [key: string]: string
+} = {};
+loadMappings()
+  .then((mappings: any) => DNS_MAPPINGS = mappings);
 
 const cache: {
   [key: string]: string
 } = {};
 
-fs.watch(MAPPINGS_PATH, () => {
+fs.watch(MAPPINGS_PATH, async () => {
   console.log('Reloading DNS mappings');
-  setTimeout(() => {
-    DNS_MAPPINGS = loadMappings() || DNS_MAPPINGS;
-    console.log(DNS_MAPPINGS);
-  }, 1000);
+  DNS_MAPPINGS = await loadMappings() || DNS_MAPPINGS;
+  console.log(DNS_MAPPINGS);
 });
 
-function loadMappings() {
-  try {
-    return JSON.parse(fs.readFileSync(MAPPINGS_PATH, 'utf8'));
-  } catch (err) {
-    console.log('Error loading DNS mappings', err);
-  }
+function loadMappings(): Promise<{
+  [key: string]: string
+}> {
+  return new Promise((rs, rj) => {
+    fs.readFile(MAPPINGS_PATH, {
+      encoding: 'utf8',
+    }, (err, data) => {
+      if (err) {
+        rj(err);
+        return;
+      }
+      try {
+        rs(JSON.parse(data));
+      } catch (err2) {
+        rj(err2);
+      }
+    });
+  });
 }
 
 Object.keys(DNS_MAPPINGS).forEach(async (key) => {
