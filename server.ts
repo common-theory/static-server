@@ -15,12 +15,14 @@ const cache: {
 
 fs.watch(MAPPINGS_PATH, async () => {
   console.log('Reloading DNS mappings');
-  try {
-    DNS_MAPPINGS = await loadMappings() || DNS_MAPPINGS;
-    console.log(DNS_MAPPINGS);
-  } catch (err) {
-    console.log('Error loading DNS mappings', err);
-  }
+  setTimeout(async () => {
+    try {
+      DNS_MAPPINGS = await loadMappings() || DNS_MAPPINGS;
+      console.log(DNS_MAPPINGS);
+    } catch (err) {
+      console.log('Error loading DNS mappings', err);
+    }
+  }, 500);
 });
 
 function loadMappings(): Promise<{
