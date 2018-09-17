@@ -12,15 +12,15 @@ RUN mkdir /install && \
   cd / && \
   rm -rf /install
 
-# Install node
-RUN apk add --no-cache bash nodejs-npm
+# Install node et al
+RUN apk add --no-cache bash nodejs-npm git python make g++ gcc
 
 COPY . /server
 
 RUN cd /server && \
   npm install && \
   npm run build && \
-  rm -rf node_modules
+  apk del git python make g++ gcc
 
 EXPOSE 3000
 
