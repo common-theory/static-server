@@ -3,7 +3,7 @@
 set -e
 
 ipfs init
-ipfs bootstrap add /dnsaddr/bootstrap.commontheory.io/tcp/4001/ipfs/QmQynHVRAVwcP3nsGW9s8Y1hLXN1Lc6a3WEasmC6iAxZBr
+ipfs bootstrap add /dnsaddr/bootstrap.commontheory.io/tcp/8001/ipfs/QmQynHVRAVwcP3nsGW9s8Y1hLXN1Lc6a3WEasmC6iAxZBr
 ipfs daemon --enable-namesys-pubsub &
 
 # Wait for the daemon to come up
