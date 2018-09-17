@@ -8,7 +8,7 @@ const cache: {
   [key: string]: string
 } = {};
 
-fs.watchFile(MAPPINGS_PATH, () => {
+fs.watch(MAPPINGS_PATH, () => {
   console.log('Reloading DNS mappings');
   DNS_MAPPINGS = require(MAPPINGS_PATH);
 });
