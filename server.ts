@@ -23,7 +23,6 @@ node.on('ready', async () => {
    **/
   mappings()
     .then(async (_mappings: any) => {
-      console.log(_mappings);
       DNS_MAPPINGS = _mappings;
       await preloadAddresses();
     })
