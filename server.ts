@@ -7,7 +7,11 @@ let DNS_MAPPINGS: {
   [key: string]: string
 } = {};
 loadMappings()
-  .then((mappings: any) => DNS_MAPPINGS = mappings);
+  .then(async (mappings: any) => {
+    DNS_MAPPINGS = mappings;
+    await preloadAddresses();
+  })
+  .catch(err => console.log('Error in initial load', err));
 
 const cache: {
   [key: string]: string
@@ -18,6 +22,7 @@ fs.watch(MAPPINGS_PATH, async () => {
   setTimeout(async () => {
     try {
       DNS_MAPPINGS = await loadMappings() || DNS_MAPPINGS;
+      await preloadAddresses();
       console.log(DNS_MAPPINGS);
     } catch (err) {
       console.log('Error loading DNS mappings', err);
@@ -45,15 +50,17 @@ function loadMappings(): Promise<{
   });
 }
 
-Object.keys(DNS_MAPPINGS).forEach(async (key) => {
-  const address = DNS_MAPPINGS[key];
-  try {
-    await download(address);
-    console.log(`Successfully pre-loaded ${key}`);
-  } catch (err) {
-    console.log(`Error pre-loading ${key}: ${err}`);
-  }
-});
+async function preloadAddresses() {
+  Object.keys(DNS_MAPPINGS).forEach(async (key) => {
+    const address = DNS_MAPPINGS[key];
+    try {
+      await download(address);
+      console.log(`Successfully pre-loaded ${key}`);
+    } catch (err) {
+      console.log(`Error pre-loading ${key}: ${err}`);
+    }
+  });
+}
 
 const server = http.createServer(async (req, res) => {
   const ipfsAddress = DNS_MAPPINGS[req.headers.host];
