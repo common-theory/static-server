@@ -1,7 +1,8 @@
 import http from 'http';
 import fs from 'fs';
+import path from 'path';
 
-const MAPPINGS_PATH = '../mappings.json';
+const MAPPINGS_PATH = path.resolve(__dirname, '../mappings.json');
 let DNS_MAPPINGS = require(MAPPINGS_PATH);
 
 const cache: {
