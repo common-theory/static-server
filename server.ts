@@ -8,6 +8,10 @@ const node = new IPFS({
   }
 });
 
+/**
+ * The IPNS address of a json file that stores domain hostnames keyed to IPFS
+ * hashes.
+ **/
 const MAPPING_ADDRESS = '/ipns/QmcizC46HXX5aqFw1z7xvvAN4YqMhgZB5H7pKv5Mfpr1TJ';
 
 node.on('ready', async () => {
