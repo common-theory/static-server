@@ -86,6 +86,10 @@ node.on('ready', async () => {
     return data;
   }
 
+  /**
+   * TODO: Use jsipfs ipns resolution in favor of maintaining two parallel
+   * processes at the Dockerfile level
+   **/
   async function mappings(): Promise<{
     [key: string]: string
   }> {
