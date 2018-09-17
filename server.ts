@@ -40,8 +40,8 @@ const server = http.createServer(async (req, res) => {
     });
     res.end(data);
   } catch (err) {
-      res.writeHead(500);
-      res.end('Error retrieving ipfs data' + err);
+    res.writeHead(500);
+    res.end('Error retrieving ipfs data' + err);
   }
 });
 
