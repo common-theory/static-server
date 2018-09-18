@@ -49,11 +49,19 @@ const serverHandler = async (req: http.IncomingMessage, res: http.ServerResponse
   }
 };
 
+const redirectHandler = async (req: http.IncomingMessage, res: http.ServerResponse) => {
+  res.writeHead(301, {
+    'Location': `https://${req.headers.host}${req.url}`,
+  });
+  res.end();
+};
+
 /**
  * The http server that proxies requests to IPFS resources. Mapping are done by
  * hostname -> ipfs address. These are stored in the mappings.json file.
  **/
-http.createServer(serverHandler).listen(3000, () => {
+
+http.createServer(process.env.REDIRECT_HTTPS ? redirectHandler : serverHandler).listen(3000, () => {
   console.log('http server listening on port 3000');
 });
 
