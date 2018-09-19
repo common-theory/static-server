@@ -20,14 +20,22 @@ node.on('ready', async () => {
 /**
  * The IPNS address of a json file that stores domain hostnames keyed to IPFS
  * hashes.
+ *
+ * Defaults to commontheory mappings.
  **/
-const MAPPING_ADDRESS = '/ipns/QmcizC46HXX5aqFw1z7xvvAN4YqMhgZB5H7pKv5Mfpr1TJ';
+const MAPPING_ADDRESS = process.env.MAPPING_ADDRESS || '/ipns/QmcizC46HXX5aqFw1z7xvvAN4YqMhgZB5H7pKv5Mfpr1TJ';
 
 // Cache some IPFS files in memory
 const cache: {
   [key: string]: string
 } = {};
 
+/**
+ * Check the mappings for the request host and server ipfs addressed file.
+ *
+ * Currently marks content-type as text/html for everything.
+ * TODO: Parse file mimetype somehow? Expand mapping file format?
+ **/
 const serverHandler = async (req: http.IncomingMessage, res: http.ServerResponse) => {
   const ipfsAddress = (await mappings())[req.headers.host];
   if (!ipfsAddress) {
@@ -49,6 +57,9 @@ const serverHandler = async (req: http.IncomingMessage, res: http.ServerResponse
   }
 };
 
+/**
+ * A 301 redirect to the https address.
+ **/
 const redirectHandler = async (req: http.IncomingMessage, res: http.ServerResponse) => {
   res.writeHead(301, {
     'Location': `https://${req.headers.host}${req.url}`,
@@ -60,7 +71,6 @@ const redirectHandler = async (req: http.IncomingMessage, res: http.ServerRespon
  * The http server that proxies requests to IPFS resources. Mapping are done by
  * hostname -> ipfs address. These are stored in the mappings.json file.
  **/
-
 http.createServer(process.env.REDIRECT_HTTPS ? redirectHandler : serverHandler).listen(3000, () => {
   console.log('http server listening on port 3000');
 });
