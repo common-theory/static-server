@@ -29,6 +29,9 @@ const MAPPING_ADDRESS = process.env.MAPPING_ADDRESS || '/ipns/QmcizC46HXX5aqFw1z
 const cache: {
   [key: string]: string
 } = {};
+// Store the order cache keys are added
+const cacheKeys: string[] = [];
+const MAX_CACHE_LENGTH = 20;
 
 /**
  * Check the mappings for the request host and server ipfs addressed file.
@@ -115,6 +118,9 @@ async function preloadAddresses() {
  * Attempts to load a given ipfs address. Results are stored in the cache.
  **/
 async function download(ipfsAddress: string) {
+  if (cache[ipfsAddress]) {
+    return cache[ipfsAddress];
+  }
   const files = await node.files.get(ipfsAddress);
   if (files.length < 1) {
     console.log('No files found for address');
@@ -124,7 +130,14 @@ async function download(ipfsAddress: string) {
     return;
   }
   const data = files[0].content.toString('utf8');
+
+  // Add to cache
+  cacheKeys.unshift(ipfsAddress);
+  if (cacheKeys.length > MAX_CACHE_LENGTH) {
+    delete cache[cacheKeys.pop()];
+  }
   cache[ipfsAddress] = data;
+
   return data;
 }
 
